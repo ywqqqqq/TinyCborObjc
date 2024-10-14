@@ -536,6 +536,13 @@ static CborError value_to_json(NSMutableString *out, CborValue *it, int flags, C
             return err;
 
         NSString *utf8Str = [[NSString alloc] initWithCString:str encoding:NSUTF8StringEncoding];
+        
+        /**
+          fix：双引号特殊字符值需要二次转义，否则最后会导致转字典失败
+          示例：(#&:-)^0^"~"@? *: $)    ->    (#&:-)^0^\"~\"@? *: $)    ->    (#&:-)^0^\\\"~\\\"@? *: $)
+                   数据源                                    带转义                                         二次转义
+         */
+        utf8Str = [utf8Str stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
 
         if (type == CborByteStringType) {
             [out appendFormat:@"\"%@%@\"", DSCborBase64DataMarker, utf8Str];
