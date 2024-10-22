@@ -542,6 +542,7 @@ static CborError value_to_json(NSMutableString *out, CborValue *it, int flags, C
           示例：(#&:-)^0^"~"@? *: $)    ->    (#&:-)^0^\"~\"@? *: $)    ->    (#&:-)^0^\\\"~\\\"@? *: $)
                    数据源                                    带转义                                         二次转义
          */
+        utf8Str = [utf8Str stringByReplacingOccurrencesOfString:@"\\" withString:@"\\\\"];
         utf8Str = [utf8Str stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
 
         if (type == CborByteStringType) {
